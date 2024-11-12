@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">AI Trip Advisor</h2>
+                    <div class="chat-messages mb-3" id="chat-messages" style="height: 400px; overflow-y: auto;">
+                        <div class="message system-message">
+                            <p>👋 Hello! I'm your AI travel advisor. I can help you:</p>
+                            <ul class="list-unstyled">
+                                <li>🌍 Plan custom trips and itineraries</li>
+                                <li>🗺️ Suggest destinations based on your interests</li>
+                                <li>📋 Provide travel tips and recommendations</li>
+                                <li>💡 Answer any travel-related questions</li>
+                            </ul>
+                            <p>Try asking something like:</p>
+                            <ul class="list-unstyled">
+                                <li>"Plan a 5-day cultural trip to Tokyo"</li>
+                                <li>"What are the best beaches in Thailand?"</li>
+                                <li>"Suggest activities for a family trip to London"</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <form id="chat-form" class="chat-input">
+                        <div class="input-group">
+                            <input type="text" id="user-input" class="form-control" 
+                                   placeholder="Type your travel question here..." required>
+                            <button type="submit" class="btn btn-primary px-4" id="send-button">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatForm = document.getElementById('chat-form');
+    const chatMessages = document.getElementById('chat-messages');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+
+    function appendMessage(content, isUser = false, isError = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'} mb-3`;
+        
+        if (typeof content === 'object' && content.itinerary) {
+            // Format trip suggestion
+            let html = `<h5>${content.destination}</h5>
+                       <p><strong>Duration:</strong> ${content.suggested_duration} days<br>
+                          <strong>Travel Type:</strong> ${content.travel_type}<br>
+                          <strong>Group Size:</strong> ${content.recommended_group_size}</p>
+                       <h6>Suggested Itinerary:</h6>`;
+            
+            for (const [day, activities] of Object.entries(content.itinerary)) {
+                html += `<div class="day-plan">
+                            <strong>Day ${day}</strong>
+                            <ul class="list-unstyled">
+                                ${activities.map(activity => `<li>${activity}</li>`).join('')}
+                            </ul>
+                        </div>`;
+            }
+            messageDiv.innerHTML = html;
+        } else {
+            if (isError) {
+                messageDiv.innerHTML = `<div class="alert alert-danger mb-0">${content}</div>`;
+            } else {
+                messageDiv.innerHTML = `<p>${content}</p>`;
+            }
+        }
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Add user message
+        appendMessage(message, true);
+        
+        // Disable input while processing
+        userInput.value = '';
+        userInput.disabled = true;
+        sendButton.disabled = true;
+        
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            });
+            
+            const data = await response.json();
+            
+            if (data.error) {
+                appendMessage(data.error, false, true);
+            } else {
+                appendMessage(data.response);
+            }
+        } catch (error) {
+            appendMessage('Sorry, I encountered an error processing your request. Please try again.', false, true);
+        }
+        
+        userInput.disabled = false;
+        sendButton.disabled = false;
+        userInput.focus();
+    });
+});
+</script>
+
+<style>
+.message {
+    padding: 1.2rem;
+    border-radius: 1rem;
+    margin: 0.8rem 0;
+    transition: all 0.3s ease;
+}
+
+.user-message {
+    background-color: #e7f5ff;
+    margin-left: 20%;
+    border-left: 4px solid #0d6efd;
+}
+
+.ai-message {
+    background-color: #f8f9fa;
+    margin-right: 20%;
+    border-right: 4px solid #20c997;
+}
+
+.system-message {
+    background-color: #fff3cd;
+    margin: 0 10%;
+    text-align: center;
+    border: 1px solid #ffeeba;
+}
+
+.day-plan {
+    margin-bottom: 0.8rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+}
+
+.chat-messages {
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #dee2e6;
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #0d6efd;
+}
+
+.chat-input {
+    margin-top: 1rem;
+}
+
+.chat-input .form-control {
+    border-radius: 2rem;
+    padding-left: 1.5rem;
+    background-color: #ffffff;
+    border: 2px solid #dee2e6;
+}
+
+.chat-input .form-control:focus {
+    box-shadow: none;
+    border-color: #0d6efd;
+    background-color: #ffffff;
+}
+
+.chat-input .btn {
+    border-radius: 2rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+</style>
+{% endblock %}

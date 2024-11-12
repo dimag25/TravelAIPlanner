@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Shared Trips</h2>
+
+    <!-- Search and Filter Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('shared_trips') }}" class="row g-3">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Search Destination</label>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           value="{{ request.args.get('search', '') }}" placeholder="Enter destination...">
+                </div>
+                <div class="col-md-3">
+                    <label for="travel_type" class="form-label">Travel Type</label>
+                    <select class="form-select" id="travel_type" name="travel_type">
+                        <option value="">All Types</option>
+                        <option value="adventure" {% if request.args.get('travel_type') == 'adventure' %}selected{% endif %}>Adventure</option>
+                        <option value="relaxation" {% if request.args.get('travel_type') == 'relaxation' %}selected{% endif %}>Relaxation</option>
+                        <option value="cultural" {% if request.args.get('travel_type') == 'cultural' %}selected{% endif %}>Cultural</option>
+                        <option value="family" {% if request.args.get('travel_type') == 'family' %}selected{% endif %}>Family</option>
+                        <option value="business" {% if request.args.get('travel_type') == 'business' %}selected{% endif %}>Business</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="duration" class="form-label">Duration</label>
+                    <select class="form-select" id="duration" name="duration">
+                        <option value="">Any</option>
+                        <option value="1-3" {% if request.args.get('duration') == '1-3' %}selected{% endif %}>1-3 days</option>
+                        <option value="4-7" {% if request.args.get('duration') == '4-7' %}selected{% endif %}>4-7 days</option>
+                        <option value="8+" {% if request.args.get('duration') == '8+' %}selected{% endif %}>8+ days</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="sort" class="form-label">Sort By</label>
+                    <select class="form-select" id="sort" name="sort">
+                        <option value="newest" {% if request.args.get('sort') == 'newest' %}selected{% endif %}>Newest First</option>
+                        <option value="oldest" {% if request.args.get('sort') == 'oldest' %}selected{% endif %}>Oldest First</option>
+                        <option value="destination" {% if request.args.get('sort') == 'destination' %}selected{% endif %}>Destination</option>
+                    </select>
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if trips %}
+        <div class="row">
+            {% for trip in trips %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ trip.destination }}</h5>
+                            <p class="card-text">
+                                {{ trip.num_days }} days | {{ trip.travel_type }} | {{ trip.num_people }} people
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">Shared by {{ trip.owner.username }}</small>
+                            </p>
+                            <a href="{{ url_for('view_trip', trip_id=trip.id) }}" class="btn btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            {% if request.args %}
+                No shared trips found matching your criteria. <a href="{{ url_for('shared_trips') }}">Clear filters</a>
+            {% else %}
+                No trips have been shared with you yet.
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

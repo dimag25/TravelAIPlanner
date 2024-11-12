@@ -1,0 +1,195 @@
+:root {
+    --bg-subtle: #f8f9fa;
+    --text-primary: #212529;
+    --border-color: #dee2e6;
+    --alert-severe: #dc3545;
+    --alert-moderate: #ffc107;
+    --alert-mild: #0dcaf0;
+}
+
+.card {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+.navbar {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.navbar-light .navbar-brand,
+.navbar-light .nav-link {
+    color: var(--text-primary);
+}
+
+.trip-day {
+    border-left: 4px solid #0d6efd;
+    background-color: var(--bg-subtle);
+    padding-left: 1rem;
+    margin-bottom: 2rem;
+}
+
+.weather-info {
+    background-color: var(--bg-subtle);
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.weather-alert {
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.weather-alert.severe {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-left: 4px solid var(--alert-severe);
+    color: var(--alert-severe);
+}
+
+.weather-alert.moderate {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-left: 4px solid var(--alert-moderate);
+    color: var(--alert-moderate);
+}
+
+.weather-alert.mild {
+    background-color: rgba(13, 202, 240, 0.1);
+    border-left: 4px solid var(--alert-mild);
+    color: var(--alert-mild);
+}
+
+.map-container {
+    height: 400px;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.review-section {
+    background-color: var(--bg-subtle);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+}
+
+.weather-controls {
+    background-color: var(--bg-subtle);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.weather-controls .form-group {
+    margin-bottom: 0.5rem;
+}
+
+.weather-controls label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.weather-controls .btn {
+    width: 100%;
+}
+
+/* Hourly forecast styles */
+.hourly-forecast {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+}
+
+.hourly-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+.hour-item {
+    flex: 0 0 auto;
+    text-align: center;
+    padding: 0.5rem;
+    min-width: 80px;
+    border-right: 1px solid var(--border-color);
+}
+
+.hour-item:last-child {
+    border-right: none;
+}
+
+.hour-time {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.hour-icon {
+    font-size: 1.25rem;
+    margin: 0.5rem 0;
+    color: #6c757d;
+}
+
+.hour-temp {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.hour-precip {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.hourly-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+
+.hourly-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.hourly-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 3px;
+}
+
+/* Temperature and Precipitation graph styles */
+.temperature-graph,
+.precipitation-graph {
+    height: 200px;
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.precipitation-graph {
+    border-top: 2px solid var(--border-color);
+}
+
+.weather-day {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.weather-graph-title {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Travel Preferences</h2>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('preferences') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Preferred Travel Types</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="adventure" name="travel_types" value="adventure"
+                                    {% if user_preferences.preferred_travel_types and 'adventure' in user_preferences.preferred_travel_types|fromjson %}checked{% endif %}>
+                                <label class="form-check-label" for="adventure">Adventure</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="relaxation" name="travel_types" value="relaxation"
+                                    {% if user_preferences.preferred_travel_types and 'relaxation' in user_preferences.preferred_travel_types|fromjson %}checked{% endif %}>
+                                <label class="form-check-label" for="relaxation">Relaxation</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="cultural" name="travel_types" value="cultural"
+                                    {% if user_preferences.preferred_travel_types and 'cultural' in user_preferences.preferred_travel_types|fromjson %}checked{% endif %}>
+                                <label class="form-check-label" for="cultural">Cultural</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="family" name="travel_types" value="family"
+                                    {% if user_preferences.preferred_travel_types and 'family' in user_preferences.preferred_travel_types|fromjson %}checked{% endif %}>
+                                <label class="form-check-label" for="family">Family</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="business" name="travel_types" value="business"
+                                    {% if user_preferences.preferred_travel_types and 'business' in user_preferences.preferred_travel_types|fromjson %}checked{% endif %}>
+                                <label class="form-check-label" for="business">Business</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="preferred_destinations" class="form-label">Preferred Destinations (comma-separated)</label>
+                            <input type="text" class="form-control" id="preferred_destinations" name="preferred_destinations"
+                                   value="{{ user_preferences.preferred_destinations|fromjson|join(', ') if user_preferences.preferred_destinations else '' }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="preferred_trip_length" class="form-label">Preferred Trip Length (days)</label>
+                            <input type="number" class="form-control" id="preferred_trip_length" name="preferred_trip_length"
+                                   value="{{ user_preferences.preferred_trip_length }}" min="1" max="30">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="preferred_group_size" class="form-label">Preferred Group Size</label>
+                            <input type="number" class="form-control" id="preferred_group_size" name="preferred_group_size"
+                                   value="{{ user_preferences.preferred_group_size }}" min="1" max="20">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="budget_range" class="form-label">Budget Range</label>
+                            <select class="form-select" id="budget_range" name="budget_range">
+                                <option value="budget" {% if user_preferences.budget_range == 'budget' %}selected{% endif %}>Budget</option>
+                                <option value="mid-range" {% if user_preferences.budget_range == 'mid-range' %}selected{% endif %}>Mid-range</option>
+                                <option value="luxury" {% if user_preferences.budget_range == 'luxury' %}selected{% endif %}>Luxury</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="interests" class="form-label">Interests (comma-separated)</label>
+                            <input type="text" class="form-control" id="interests" name="interests"
+                                   value="{{ user_preferences.interests|fromjson|join(', ') if user_preferences.interests else '' }}">
+                            <div class="form-text">E.g., hiking, photography, food, history, art</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Preferences</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

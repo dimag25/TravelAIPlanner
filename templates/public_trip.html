@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ trip.destination }}</h2>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Trip Details</h5>
+                    <p><strong>Duration:</strong> {{ trip.num_days }} days</p>
+                    <p><strong>Travel Type:</strong> {{ trip.travel_type }}</p>
+                    <p><strong>Number of People:</strong> {{ trip.num_people }}</p>
+                    <p><strong>Created by:</strong> {{ trip.owner.username }}</p>
+                    
+                    {% if not current_user.is_authenticated %}
+                    <div class="alert alert-info">
+                        <a href="{{ url_for('auth.login') }}">Log in</a> or 
+                        <a href="{{ url_for('auth.register') }}">register</a> 
+                        to create your own trip plans!
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="itinerary">
+                <h3>Itinerary</h3>
+                {% for day, activities in trip.itinerary.items() %}
+                    <div class="trip-day">
+                        <h4>Day {{ day }}</h4>
+                        <div class="activities">
+                            {% for activity in activities %}
+                                <div class="activity">{{ activity }}</div>
+                            {% endfor %}
+                            <a href="https://www.google.com/maps/dir/{% for activity in activities %}{{ activity.split(': ')[1]|urlencode }}{% if not loop.last %}/{% endif %}{% endfor %}"
+                               class="btn btn-outline-primary btn-sm mt-2"
+                               target="_blank">
+                                <i class="fas fa-route"></i> View Day {{ day }} Route in Google Maps
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Review Section -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h4>Reviews</h4>
+                    {% if reviews %}
+                        {% for review in reviews %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="card-subtitle mb-2 text-muted">{{ review.user.username }}</h6>
+                                            <p class="mb-1">
+                                                {% for _ in range(review.rating) %}⭐{% endfor %}
+                                            </p>
+                                            <p class="card-text">{{ review.comment }}</p>
+                                        </div>
+                                        <small class="text-muted">{{ review.created_at.strftime('%Y-%m-%d') }}</small>
+                                    </div>
+                                    {% if review.photo_path %}
+                                        <div class="mt-3">
+                                            <img src="{{ url_for('static', filename=review.photo_path) }}" 
+                                                 class="img-fluid rounded" alt="Review photo"
+                                                 style="max-height: 300px;">
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No reviews yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Weather Forecast</h5>
+                    <div id="weather-container" class="weather-info">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading weather data...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/weather.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const destination = '{{ trip.destination }}';
+        const dates = [];
+        {% for day in range(trip.num_days) %}
+            dates.push('{{ (trip.created_at + timedelta(days=day)).strftime("%Y-%m-%d") }}');
+        {% endfor %}
+        
+        fetchWeatherData(destination, dates);
+    });
+</script>
+{% endblock %}

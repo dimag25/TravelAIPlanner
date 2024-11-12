@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <h1>500 - Internal Server Error</h1>
+    <p class="lead">The server encountered an internal error and was unable to complete your request.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">Return to Home</a>
+</div>
+{% endblock %}
